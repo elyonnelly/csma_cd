@@ -47,12 +47,12 @@ void CSMACD::handle_collisions(std::set<int> &has_collision) {
         }
         attempt[station_index]++;
         //верхнее ограничение на количество отправок -- 16
-        if (attempt[station_index] == 16)
+        if (attempt[station_index] == MAX_ATTEMPT)
         {
             //если они истекли, то станция перестает пытаться отправить кадр
             stations.erase({times[station_index], station_index});
             times.erase(station_index);
-            std::cout << "Station " << station_index << " could not send frame";
+            std::cout << "Station " << station_index << " could not send frame\n";
             continue;
         }
         double new_time =  times[station_index] + backoff(attempt[station_index]);
@@ -78,7 +78,7 @@ void CSMACD::handle_end_of_frame_sending(double now) {
 
 double CSMACD::backoff(int iteration)
 {
-    double tme =  (rand() % (1 << iteration)) * SLOT_TIME;
+    double tme =  (rand() % (1 << std::min(10, iteration) )) * SLOT_TIME;
     return tme;
 }
 

@@ -10,24 +10,27 @@ class CSMACD {
 public:
     CSMACD(int n, bool full_log)
     {
-        number_of_stations = n;
+        this->full_log = full_log;
         for (int i = 0; i < n; i++)
         {
             times[i] = 0;
             stations.insert({times[i], i});
-            this->full_log = full_log;
         }
     }
 
     void reproduce_sending();
 
 private:
+    //для максимального кадра:
+    //данные (1500 байт) + заголовок (18 байт) + преамбула (8 байт)
+    //итоговое время получаем из расчета, что в Ethernet скорость 10 Мбит/c
+    //t_бит = 0.1 мкс
+    const double SENDING_TIME = 1526 * 8 * 0.1;
     const double SLOT_TIME = 51.2;
-    const double SENDING_TIME = 1210.8;
     const double INTERFRAME_INTERVAL = 9.6;
+    const int MAX_ATTEMPT = 16;
 
     bool full_log;
-    int number_of_stations;
     std::map<int, double> times;
     //мы поддерживаем станции в сортированном порядке по времени, когда каждая их них собирается отправлять кадр
     std::set<std::pair<double, int> > stations;
