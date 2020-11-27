@@ -1,6 +1,6 @@
 #include <iostream>
 #include <time.h>
-#include "CSMACD.h"
+#include "CSMACD.cpp"
 
 using namespace std;
 
