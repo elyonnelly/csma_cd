@@ -21,24 +21,24 @@ public:
             while (!stations.empty())
             {
                 auto first_station = *stations.begin();
-                auto current_station = ++stations.begin();
+                auto next_station = ++stations.begin();
                 std::set<int> has_collision;
                 if (full_log)
                 {
                     std::cout << "Station " << first_station.second << " " << " start sending at " << first_station.first << "\n";
                 }
-                //если станция current_station начнет отправку кадра раньше, чем закончит first_station
+                //если станция next_station начнет отправку кадра раньше, чем закончит first_station
                 //то возникнет коллизия, которую станции задетектируют до конца отправки
                 //и потому начнут пересылать кадр сначала
-                while (current_station != stations.end() && first_station.first + SENDING_TIME > (*current_station).first)
+                while (next_station != stations.end() && first_station.first + SENDING_TIME > (*next_station).first)
                 {
                     if (full_log)
                     {
-                        std::cout << "Station " << (*current_station).second << " " << " start sending at " << (*current_station).first << "\n";
+                        std::cout << "Station " << (*next_station).second << " " << " start sending at " << (*next_station).first << "\n";
                     }
                     has_collision.insert(first_station.second);
-                    has_collision.insert((*current_station).second);
-                    ++current_station;
+                    has_collision.insert((*next_station).second);
+                    ++next_station;
                 }
                 handle_collisions(has_collision);
 
@@ -98,8 +98,8 @@ private:
             int station_index = station.first;
             double sending_time = station.second;
             //если время, когда сл станция хочет начать передачу
-            //ближе ко времени конца передачи последнего кадра меньше чем межкадрового интервала,
-            //то эта станция будет начинать передачу сразу после конца межкадрового интервала
+            //ближе ко времени конца передачи последнего кадра меньше чем на межкадровый интервал,
+            //то эта станция будет дожидаться конца интервала и начинать передачу сразу после
             if (sending_time < now + INTERFRAME_INTERVAL)
             {
                 sending_time = times[station_index] = now + INTERFRAME_INTERVAL;
